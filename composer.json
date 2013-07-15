@@ -1,0 +1,20 @@
+{
+	"name": "Foowie/PermissionChecker",
+	"type": "library",
+	"description": "Access permission check & latte macros",
+	"keywords": ["nette", "permission"],
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+	{
+		"name": "Daniel Robenek"
+	}
+	],
+	"require": {
+		"nette/nette": "@dev"
+	},
+	"autoload": {
+		"psr-0": {
+			"Permission": "src/"
+		}
+	}	
+}
