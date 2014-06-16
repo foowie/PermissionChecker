@@ -1,8 +1,8 @@
 {
-	"name": "Foowie/PermissionChecker",
+	"name": "foowie/permission-checker",
 	"type": "library",
 	"description": "Access permission check & latte macros",
-	"keywords": ["nette", "permission"],
+	"keywords": ["nette", "permission", "security"],
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 	{
@@ -10,11 +10,11 @@
 	}
 	],
 	"require": {
-		"nette/nette": "@dev"
+		"nette/nette": "~2.2"
 	},
 	"autoload": {
 		"psr-0": {
-			"Permission": "src/"
+			"Foowie\\PermissionChecker": "src/"
 		}
 	}	
 }
