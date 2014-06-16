@@ -1,22 +1,27 @@
 <?php
 
-namespace Permission\Checker;
+namespace Foowie\PermissionChecker\Security;
+use Nette\Application\Application;
+use Nette\Application\IPresenterFactory;
+use Nette\Application\UI\Presenter;
+use Nette\Application\UI\PresenterComponentReflection;
+use Nette\Object;
 
 /**
- * @author Daniel Robenek <danrob@seznam.cz>
+ * @author Daniel Robenek <daniel.robenek@me.com>
  */
-class LinkPermissionChecker extends \Nette\Object {
+class LinkPermissionChecker extends Object {
 
-	/** @var \Nette\Application\IPresenterFactory */
+	/** @var IPresenterFactory */
 	protected $presenterFactory;
 
-	/** @var \Nette\Application\Application */
+	/** @var Application */
 	protected $application;
 
 	/** @var IPermissionChecker */
 	protected $permissionChecker;
 
-	function __construct(\Nette\Application\IPresenterFactory $presenterFactory, \Nette\Application\Application $application, IPermissionChecker $permissionChecker) {
+	function __construct(IPresenterFactory $presenterFactory, Application $application, IPermissionChecker $permissionChecker) {
 		$this->presenterFactory = $presenterFactory;
 		$this->application = $application;
 		$this->permissionChecker = $permissionChecker;
@@ -29,12 +34,14 @@ class LinkPermissionChecker extends \Nette\Object {
 	 */
 	public function isAllowed($link) {
 		list($presenter, $action) = $this->formatLink($link);
-		$presenterReflection = \Nette\Application\UI\PresenterComponentReflection::from($this->presenterFactory->getPresenterClass($presenter));
-		if (!$this->permissionChecker->isAllowed($presenterReflection))
+		$presenterReflection = PresenterComponentReflection::from($this->presenterFactory->getPresenterClass($presenter));
+		if (!$this->permissionChecker->isAllowed($presenterReflection)) {
 			return false;
-		$actionKey = \Nette\Application\UI\Presenter::ACTION_KEY . ucfirst($action);
-		if ($presenterReflection->hasMethod($actionKey) && !$this->permissionChecker->isAllowed($presenterReflection->getMethod($actionKey)))
+		}
+		$actionKey = Presenter::ACTION_KEY . ucfirst($action);
+		if ($presenterReflection->hasMethod($actionKey) && !$this->permissionChecker->isAllowed($presenterReflection->getMethod($actionKey))) {
 			return false;
+		}
 		return true;
 	}
 
@@ -43,14 +50,16 @@ class LinkPermissionChecker extends \Nette\Object {
 	 * @return array(presenter, action)
 	 */
 	public function formatLink($destination) {
-		if($destination == 'this')
+		if($destination == 'this') {
 			return array($this->application->presenter->getName(), $this->application->presenter->getAction());
-		
+		}
+
 		$parts = explode(':', $destination);
 		if ($destination[0] != ':') {
 			$current = explode(':', $this->application->presenter->getName());
-			if (strpos($destination, ':') !== false)
+			if (strpos($destination, ':') !== false) {
 				array_pop($current); // remove presenter
+			}
 			$parts = array_merge($current, $parts);
 		} else {
 			array_shift($parts); // remove empty
@@ -58,7 +67,7 @@ class LinkPermissionChecker extends \Nette\Object {
 
 		if ($destination[strlen($destination) - 1] == ':') {
 			array_pop($parts); // remove empty
-			$action = \Nette\Application\UI\Presenter::DEFAULT_ACTION;
+			$action = Presenter::DEFAULT_ACTION;
 		} else {
 			$action = array_pop($parts);
 		}

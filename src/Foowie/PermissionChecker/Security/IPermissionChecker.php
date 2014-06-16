@@ -1,9 +1,9 @@
 <?php
 
-namespace Permission\Checker;
+namespace Foowie\PermissionChecker\Security;
 
 /**
- * @author Daniel Robenek <danrob@seznam.cz>
+ * @author Daniel Robenek <daniel.robenek@me.com>
  */
 interface IPermissionChecker {
 
