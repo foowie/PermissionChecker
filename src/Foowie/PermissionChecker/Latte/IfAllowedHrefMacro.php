@@ -3,7 +3,7 @@
 namespace Foowie\PermissionChecker\Latte;
 
 use Latte\Compiler;
-use Latte\IMacro;
+use Latte\Macro;
 use Latte\MacroNode;
 use Latte\PhpWriter;
 use Nette\SmartObject;
@@ -11,7 +11,7 @@ use Nette\SmartObject;
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
  */
-class IfAllowedHrefMacro implements IMacro {
+class IfAllowedHrefMacro implements Macro {
 	use SmartObject;
 
 	/** @var Compiler */
