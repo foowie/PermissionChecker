@@ -1,24 +1,27 @@
 <?php
 
 namespace Foowie\PermissionChecker\Security;
+
+use Nette\Application\UI\ComponentReflection;
 use Nette\InvalidStateException;
-use Nette\Object;
 use Nette\Security\User;
+use Nette\SmartObject;
 
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
  */
-class AnnotationPermissionChecker extends Object implements IPermissionChecker {
+class AnnotationPermissionChecker implements IPermissionChecker {
+	use SmartObject;
 
 	/** @var User */
 	protected $user;
 
-	function __construct(User $user) {
+	public function __construct(User $user) {
 		$this->user = $user;
 	}
 
 	/**
-	 * @param \Reflection $element
+	 * @param \Reflector $element
 	 * @return bool
 	 */
 	public function isAllowed($element) {
@@ -27,7 +30,7 @@ class AnnotationPermissionChecker extends Object implements IPermissionChecker {
 
 	protected function checkRoles($element) {
 		if ($element->hasAnnotation('role')) {
-			$roles = (array) $element->getAnnotation('role');
+			$roles = (array) $this->getAnnotation($element, 'role');
 			foreach ($roles as $role) {
 				if ($this->user->isInRole($role)) {
 					return true;
@@ -40,7 +43,7 @@ class AnnotationPermissionChecker extends Object implements IPermissionChecker {
 
 	protected function checkResources($element) {
 		if ($element->hasAnnotation('resource')) {
-			$resources = (array) $element->getAnnotation('resource');
+			$resources = (array) $this->getAnnotation($element, 'resource');
 			if (count($resources) != 1) {
 				throw new InvalidStateException('Invalid annotation resource count!');
 			}
@@ -61,4 +64,7 @@ class AnnotationPermissionChecker extends Object implements IPermissionChecker {
 		return true;
 	}
 
+	protected function getAnnotation(\Reflector $element, $name) {
+		return ComponentReflection::parseAnnotation($element, $name);
+	}
 }

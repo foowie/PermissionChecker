@@ -6,12 +6,13 @@ use Latte\Compiler;
 use Latte\IMacro;
 use Latte\MacroNode;
 use Latte\PhpWriter;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
  */
-class IfAllowedHrefMacro extends Object implements IMacro {
+class IfAllowedHrefMacro implements IMacro {
+	use SmartObject;
 
 	/** @var Compiler */
 	protected $compiler;
@@ -40,10 +41,8 @@ class IfAllowedHrefMacro extends Object implements IMacro {
 	 * @return bool
 	 */
 	public function nodeOpened(MacroNode $node) {
-		$node->isEmpty = FALSE;
-		$this->compiler->setContext(Compiler::CONTEXT_DOUBLE_QUOTED_ATTR);
+		$node->empty = false;
 		$res1 = $this->compile($node, array($this, 'macroHref'));
-		$this->compiler->setContext(NULL);
 		if (!$node->attrCode) {
 			$node->attrCode = "<?php $res1 ?>";
 		}

@@ -3,14 +3,15 @@
 namespace Foowie\PermissionChecker\Security;
 use Nette\Application\Application;
 use Nette\Application\IPresenterFactory;
+use Nette\Application\UI\ComponentReflection;
 use Nette\Application\UI\Presenter;
-use Nette\Application\UI\PresenterComponentReflection;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
  */
-class LinkPermissionChecker extends Object {
+class LinkPermissionChecker {
+	use SmartObject;
 
 	/** @var IPresenterFactory */
 	protected $presenterFactory;
@@ -21,7 +22,7 @@ class LinkPermissionChecker extends Object {
 	/** @var IPermissionChecker */
 	protected $permissionChecker;
 
-	function __construct(IPresenterFactory $presenterFactory, Application $application, IPermissionChecker $permissionChecker) {
+	public function __construct(IPresenterFactory $presenterFactory, Application $application, IPermissionChecker $permissionChecker) {
 		$this->presenterFactory = $presenterFactory;
 		$this->application = $application;
 		$this->permissionChecker = $permissionChecker;
@@ -34,7 +35,7 @@ class LinkPermissionChecker extends Object {
 	 */
 	public function isAllowed($link) {
 		list($presenter, $action) = $this->formatLink($link);
-		$presenterReflection = PresenterComponentReflection::from($this->presenterFactory->getPresenterClass($presenter));
+		$presenterReflection = new ComponentReflection($this->presenterFactory->getPresenterClass($presenter));
 		if (!$this->permissionChecker->isAllowed($presenterReflection)) {
 			return false;
 		}
