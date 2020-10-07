@@ -72,7 +72,7 @@ class IfAllowedHrefMacro implements IMacro {
 		if (is_string($def)) {
 			return $writer->write($def);
 		} else {
-			return callback($def)->invoke($node, $writer);
+			return call_user_func($def, $node, $writer);
 		}
 	}
 }

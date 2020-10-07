@@ -1,6 +1,7 @@
 <?php
 
 namespace Foowie\PermissionChecker\Security;
+
 use Nette\Application\Application;
 use Nette\Application\IPresenterFactory;
 use Nette\Application\UI\ComponentReflection;
@@ -51,13 +52,14 @@ class LinkPermissionChecker {
 	 * @return array(presenter, action)
 	 */
 	public function formatLink($destination) {
-		if($destination == 'this') {
-			return array($this->application->presenter->getName(), $this->application->presenter->getAction());
+		$presenter = $this->application->getPresenter() instanceof Presenter ? $this->application->getPresenter() : null;
+		if($presenter !== null && $destination == 'this') {
+			return array($presenter->getName(), $presenter->getAction());
 		}
 
 		$parts = explode(':', $destination);
-		if ($destination[0] != ':') {
-			$current = explode(':', $this->application->presenter->getName());
+		if ($presenter !== null && $destination[0] != ':') {
+			$current = explode(':', $presenter->getName());
 			if (strpos($destination, ':') !== false) {
 				array_pop($current); // remove presenter
 			}
