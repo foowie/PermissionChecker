@@ -10,8 +10,9 @@
 	}
 	],
 	"require": {
-		"nette/nette": "~2.4|^3.0",
-		"latte/latte": "^2.7"
+		"php": ">=7.2",
+		"nette/nette": "^3.0",
+		"latte/latte": "^2.10.8"
 	},
 	"autoload": {
 		"psr-0": {
