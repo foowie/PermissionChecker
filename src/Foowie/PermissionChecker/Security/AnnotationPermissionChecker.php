@@ -6,6 +6,9 @@ use Nette\Application\UI\ComponentReflection;
 use Nette\InvalidStateException;
 use Nette\Security\User;
 use Nette\SmartObject;
+use ReflectionClass;
+use ReflectionMethod;
+use Reflector;
 
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
@@ -21,16 +24,18 @@ class AnnotationPermissionChecker implements IPermissionChecker {
 	}
 
 	/**
-	 * @param \Reflector $element
-	 * @return bool
+	 * @param ReflectionClass|ReflectionMethod  $element
 	 */
-	public function isAllowed($element) {
+	public function isAllowed(Reflector $element): bool {
 		return $this->checkResources($element) && $this->checkRoles($element) && $this->checkLoggedIn($element);
 	}
 
-	protected function checkRoles($element) {
-		if ($element->hasAnnotation('role')) {
-			$roles = (array) $this->getAnnotation($element, 'role');
+	/**
+	 * @param ReflectionClass|ReflectionMethod  $element
+	 */
+	protected function checkRoles(Reflector $element): bool {
+		$roles = (array) $this->getAnnotation($element, 'role');
+		if ($roles) {
 			foreach ($roles as $role) {
 				if ($this->user->isInRole($role)) {
 					return true;
@@ -41,9 +46,12 @@ class AnnotationPermissionChecker implements IPermissionChecker {
 		return true;
 	}
 
-	protected function checkResources($element) {
-		if ($element->hasAnnotation('resource')) {
-			$resources = (array) $this->getAnnotation($element, 'resource');
+	/**
+	 * @param ReflectionClass|ReflectionMethod  $element
+	 */
+	protected function checkResources(Reflector $element): bool {
+		$resources = (array) $this->getAnnotation($element, 'resource');
+		if ($resources) {
 			if (count($resources) != 1) {
 				throw new InvalidStateException('Invalid annotation resource count!');
 			}
@@ -57,14 +65,22 @@ class AnnotationPermissionChecker implements IPermissionChecker {
 		return true;
 	}
 
-	protected function checkLoggedIn($element) {
-		if ($element->hasAnnotation('loggedIn')) {
-			return $element->getAnnotation('loggedIn') == $this->user->isLoggedIn();
+	/**
+	 * @param ReflectionClass|ReflectionMethod  $element
+	 */
+	protected function checkLoggedIn(Reflector $element): bool {
+		$loggedIn = $this->getAnnotation($element, 'loggedIn');
+		if ($loggedIn) {
+			return $loggedIn == $this->user->isLoggedIn();
 		}
 		return true;
 	}
 
-	protected function getAnnotation(\Reflector $element, $name) {
+	/**
+	 * @param ReflectionClass|ReflectionMethod  $element
+	 * @return mixed[]
+	 */
+	protected function getAnnotation(Reflector $element, string $name): ?array {
 		return ComponentReflection::parseAnnotation($element, $name);
 	}
 }

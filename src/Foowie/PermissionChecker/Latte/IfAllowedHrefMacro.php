@@ -17,30 +17,27 @@ class IfAllowedHrefMacro implements Macro {
 	/** @var Compiler */
 	protected $compiler;
 
-	public static function install(Compiler $compiler) {
+	public static function install(Compiler $compiler): void {
 		$ifAllowedHrefMacro = new static($compiler);
 		$compiler->addMacro('ifAllowedHref', $ifAllowedHrefMacro);
 		$compiler->addMacro('allowedHref', $ifAllowedHrefMacro);
 	}
 
-	/**
-	 * @param Compiler $compiler
-	 */
-	function __construct($compiler) {
+	final public function __construct(Compiler $compiler) {
 		$this->compiler = $compiler;
 	}
 
-	public function initialize() {
+	public function initialize(): void {
 	}
 
-	public function finalize() {
+	public function finalize(): ?array {
+		return null;
 	}
 
 	/**
 	 * New node is found. Returns FALSE to reject.
-	 * @return bool
 	 */
-	public function nodeOpened(MacroNode $node) {
+	public function nodeOpened(MacroNode $node): bool {
 		$node->empty = false;
 		$res1 = $this->compile($node, array($this, 'macroHref'));
 		if (!$node->attrCode) {
@@ -52,21 +49,21 @@ class IfAllowedHrefMacro implements Macro {
 			$node->openingCode = "<?php $res2 ?>";
 		}
 
-		return $res1 !== false && $res2 !== false;
+		return $res1 !== '' && $res2 !== '';
 	}
 
-	public function nodeClosed(MacroNode $node) {
+	public function nodeClosed(MacroNode $node): void {
 		$res = $this->compile($node, array('Foowie\PermissionChecker\Latte\PermissionMacros', 'macroIfAllowedLinkEnd'));
 		if (!$node->closingCode) {
 			$node->closingCode = "<?php $res ?>";
 		}
 	}
 
-	public function macroHref(MacroNode $node, PhpWriter $writer) {
+	public function macroHref(MacroNode $node, PhpWriter $writer): string {
 		return $writer->write(' ?> href="<?php echo %escape(' . ($node->name === 'plink' ? '$_presenter' : '$_control') . '->link(%node.word, %node.array?)) ?>"<?php ');
 	}
 
-	private function compile(MacroNode $node, $def) {
+	private function compile(MacroNode $node, callable $def): string {
 		$node->tokenizer->reset();
 		$writer = PhpWriter::using($node, $this->compiler);
 		if (is_string($def)) {

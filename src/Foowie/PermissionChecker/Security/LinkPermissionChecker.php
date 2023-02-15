@@ -49,9 +49,9 @@ class LinkPermissionChecker {
 
 	/**
 	 * Format link to format array('module:submodule:presenter', 'action')
-	 * @return array(presenter, action)
+	 * @return string[] (presenter, action)
 	 */
-	public function formatLink($destination) {
+	public function formatLink(string $destination): array {
 		$presenter = $this->application->getPresenter() instanceof Presenter ? $this->application->getPresenter() : null;
 		if($presenter !== null && $destination == 'this') {
 			return array($presenter->getName(), $presenter->getAction());

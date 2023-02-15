@@ -2,13 +2,12 @@
 
 namespace Foowie\PermissionChecker\Security;
 
+use Reflector;
+
 /**
  * @author Daniel Robenek <daniel.robenek@me.com>
  */
 interface IPermissionChecker {
 
-	/**
-	 * @return bool
-	 */
-	function isAllowed($element);
+	function isAllowed(Reflector $element): bool;
 }
