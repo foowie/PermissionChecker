@@ -60,7 +60,7 @@ class IfAllowedHrefMacro implements Macro {
 	}
 
 	public function macroHref(MacroNode $node, PhpWriter $writer): string {
-		return $writer->write(' ?> href="<?php echo %escape(' . ($node->name === 'plink' ? '$_presenter' : '$_control') . '->link(%node.word, %node.array?)) ?>"<?php ');
+		return $writer->write(' ?> href="<?php echo %escape(' . ($node->name === 'plink' ? '$this->global->uiPresenter' : '$this->global->uiControl') . '->link(%node.word, %node.array?)) ?>"<?php ');
 	}
 
 	private function compile(MacroNode $node, callable $def): string {
