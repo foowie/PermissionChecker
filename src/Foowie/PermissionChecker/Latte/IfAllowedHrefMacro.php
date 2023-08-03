@@ -40,8 +40,12 @@ class IfAllowedHrefMacro implements Macro {
 	public function nodeOpened(MacroNode $node): bool {
 		$node->empty = false;
 		$res1 = $this->compile($node, array($this, 'macroHref'));
-		if (!$node->attrCode) {
+		if (!$node->htmlNode->closing && !$node->attrCode) {
 			$node->attrCode = "<?php $res1 ?>";
+			if ($node->prefix === MacroNode::PREFIX_TAG)  {
+				//attrCode is copied from node to htmlNode only within non tag macros
+				$node->htmlNode->attrCode .= $node->attrCode;
+			}
 		}
 
 		$res2 = $this->compile($node, array('Foowie\PermissionChecker\Latte\PermissionMacros', 'macroIfAllowedLink'));
